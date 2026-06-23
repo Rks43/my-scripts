@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  disk-check:
+    build: .
+    environment:
+      - THRESHOLD=40
+    volumes:
+      - ./disk_check:/disk_check
+      - ./web-content:/web-output
+    command: sh -c "/disk_check > /web-output/index.html && tail -f /dev/null"
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web-content:/usr/share/nginx/html
