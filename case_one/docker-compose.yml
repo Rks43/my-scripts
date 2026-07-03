@@ -6,7 +6,8 @@ services:
     volumes:
       - ./output:/usr/share/nginx/html
     depends_on:
-      - disk
+      disk:
+        condition: service_healthy
 
   db:
     image: postgres:15
@@ -16,7 +17,15 @@ services:
   disk:
     build: .
     environment:
-      THRESHOLD: 80
+      THRESHOLD: ${THRESHOLD}
     volumes:
       - ./output:/output
     command: sh -c "/disk_check > /output/index.html && tail -f /dev/null"
+    healthcheck:
+      test: ["CMD", "test", "-f", "./output/index.html"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
