@@ -6,3 +6,4 @@ df -h | awk 'NR>1 {print $1, $5}' | sed 's/%//' | while read -r partition usage;
         echo "WARNING: $partition is at $usage%"
     fi
 done
+# test
